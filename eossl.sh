@@ -5,20 +5,54 @@
 #   T.ME/EOAMIRM
 # ============================================================
 
+RED='\e[1;31m'
+DRED='\e[0;31m'
+WHITE='\e[97m'
+BOLD='\e[1m'
+BGRED='\e[97;41m'
+NC='\e[0m'
+
+# readable / informational text -> white
 print() {
-    echo -e "\e[94m""$1""\e[0m"
+    echo -e "${WHITE}${1}${NC}"
+}
+
+# decorative separator -> red
+line() {
+    echo -e "${DRED}────────────────────────────────────────────────────${NC}"
+}
+
+# option number (decorative) + white description (readable)
+menu_item() {
+    echo -e "  ${RED}${1})${NC} ${WHITE}${2}${NC}"
 }
 
 error() {
-    echo -e "\e[1;91m[error] ""$1""\e[0m"
+    echo -e "${BOLD}${BGRED} [✖] ERROR ${NC} ${WHITE}${1}${NC}"
 }
 
 success() {
-    echo -e "\e[1;94m[success] ""$1""\e[0m"
+    echo -e "${BOLD}${BGRED} [✓] DONE ${NC} ${WHITE}${1}${NC}"
 }
 
 input() {
-    read -r -p "$(echo -e '\e[33m'"$1"'\e[0m')" "$2"
+    read -r -p "$(echo -e "${RED}➤${NC} ${WHITE}${1}${NC}")" "$2"
+}
+
+banner() {
+    echo -e "${RED}"
+    cat <<'EOF'
+  ███████╗  ██████╗   ██████╗   ██████╗  ██╗
+  ██╔════╝ ██╔═══██╗ ██╔════╝  ██╔════╝  ██║
+  █████╗   ██║   ██║ ╚█████╗   ╚█████╗   ██║
+  ██╔══╝   ██║   ██║  ╚═══██╗   ╚═══██╗  ██║
+  ███████╗ ╚██████╔╝ ██████╔╝  ██████╔╝  ███████╗
+  ╚══════╝  ╚═════╝  ╚═════╝   ╚═════╝   ╚══════╝
+EOF
+    echo -e "${NC}"
+    echo -e "${RED}${BOLD}              DEV BY EOAMIR${NC}"
+    echo -e "${DRED}              T.ME/EOAMIRM${NC}"
+    line
 }
 
 require_root() {
@@ -114,16 +148,17 @@ move_ssl_files_combined() {
     local dest_dir=""
 
     while true; do
-        print "\n\n\nMoved to?\n"
-        print "1. Custom directory"
-        print "2. Marzban panel directory"
-        print "3. 3x-ui/x-ui/s-ui/hiddify panel directory"
-        input "\nEnter your choice (1, 2, 3): " "choice"
+        line
+        print "Move certificate to?"
+        menu_item 1 "Custom directory"
+        menu_item 2 "Marzban panel directory"
+        menu_item 3 "3x-ui/x-ui/s-ui/hiddify panel directory"
+        input "Enter your choice (1, 2, 3): " "choice"
 
         case $choice in
             1)
                 while true; do
-                    input "\nEnter the destination directory path: " "dest_dir"
+                    input "Enter the destination directory path: " "dest_dir"
                     if [ -z "$dest_dir" ]; then
                         error "Destination directory cannot be empty."
                     elif [[ ! "$dest_dir" == /* ]]; then
@@ -163,7 +198,7 @@ move_ssl_files_combined() {
             fi
             cp "$HOME/.acme.sh/${domain}_ecc/fullchain.cer" "$dest_dir/fullchain.cer" || { error "Error copying certificate files"; return 1; }
             cp "$HOME/.acme.sh/${domain}_ecc/${domain}.key" "$dest_dir/privkey.key" || { error "Error copying certificate files"; return 1; }
-            success "SSL certificate files for domain '$domain' successfully moved.\n\n\t⭐ SSL location: $dest_dir\n\n\tfullchain: $dest_dir/fullchain.cer\n\tkey file : $dest_dir/privkey.key\n\n"
+            success "SSL certificate files for '$domain' moved.\n\t⭐ Location : $dest_dir\n\tfullchain  : $dest_dir/fullchain.cer\n\tkey file   : $dest_dir/privkey.key"
         elif [ "$type" == "certbot" ]; then
             if [ ! -f /etc/letsencrypt/live/"$domain"/fullchain.pem ] || [ ! -f /etc/letsencrypt/live/"$domain"/privkey.pem ]; then
                 error "Certificate files not found in '/etc/letsencrypt/live/$domain/'."
@@ -171,7 +206,7 @@ move_ssl_files_combined() {
             fi
             cp /etc/letsencrypt/live/"$domain"/fullchain.pem "$dest_dir/fullchain.pem" || { error "Error copying certificate files"; return 1; }
             cp /etc/letsencrypt/live/"$domain"/privkey.pem "$dest_dir/privkey.pem" || { error "Error copying certificate files"; return 1; }
-            success "SSL certificate files for domain '$domain' successfully moved.\n\n\t⭐ SSL location: $dest_dir\n\n\tfullchain: $dest_dir/fullchain.pem\n\tkey file : $dest_dir/privkey.pem\n\n"
+            success "SSL certificate files for '$domain' moved.\n\t⭐ Location : $dest_dir\n\tfullchain  : $dest_dir/fullchain.pem\n\tkey file   : $dest_dir/privkey.pem"
         fi
         break
     done
@@ -182,13 +217,13 @@ get_single_ssl() {
     local email="$2"
 
     if "$HOME/.acme.sh/acme.sh" --issue --force --standalone -d "$domain"; then
-        success "\n\n\t⭐ SSL certificate for domain '$domain' successfully obtained."
+        success "SSL certificate for domain '$domain' successfully obtained."
         move_ssl_files_combined "$domain" "acme"
     elif certbot certonly --standalone -d "$domain" --email "$email" --agree-tos --non-interactive; then
-        success "\n\n\t⭐ SSL certificate for domain '$domain' successfully obtained."
+        success "SSL certificate for domain '$domain' successfully obtained."
         move_ssl_files_combined "$domain" "certbot"
     else
-        error "Failed to obtain SSL certificate for domain '$domain'. Please check your DNS configuration and try again.\n"
+        error "Failed to obtain SSL certificate for domain '$domain'. Check your DNS configuration and try again."
     fi
 }
 
@@ -202,17 +237,17 @@ get_multi_domain_ssl() {
     done
 
     if certbot certonly --standalone $domain_args --email "$email" --agree-tos --non-interactive; then
-        success "\n\n\t⭐ SSL certificate for domains '$domains' successfully obtained."
+        success "SSL certificate for domains '$domains' successfully obtained."
         for d in $domains; do
             move_ssl_files_combined "$d" "certbot"
         done
     elif "$HOME/.acme.sh/acme.sh" --issue --force --standalone $domain_args; then
-        success "\n\n\t⭐ SSL certificate for domains '$domains' successfully obtained."
+        success "SSL certificate for domains '$domains' successfully obtained."
         for d in $domains; do
             move_ssl_files_combined "$d" "acme"
         done
     else
-        error "\n\tFailed to obtain SSL certificate for domains '$domains'.\n"
+        error "Failed to obtain SSL certificate for domains '$domains'."
     fi
 }
 
@@ -221,10 +256,10 @@ get_wildcard_ssl() {
     local email="$2"
 
     if certbot certonly --manual --preferred-challenges=dns -d "*.$domain" --agree-tos --email "$email"; then
-        success "\n\n\t⭐ SSL certificate for domain '*.$domain' successfully obtained."
+        success "SSL certificate for domain '*.$domain' successfully obtained."
         move_ssl_files_combined "$domain" "certbot"
     else
-        error "Failed to obtain SSL certificate for domain '$domain'. Please check your DNS configuration and try again.\n"
+        error "Failed to obtain SSL certificate for domain '$domain'. Check your DNS configuration and try again."
     fi
 }
 
@@ -286,10 +321,10 @@ get_cloudflare_ssl() {
     export CF_Email="$email"
 
     if "$HOME/.acme.sh/acme.sh" --issue -d "${domain}" -d "*.${domain}" --dns dns_cf --log; then
-        success "\n\n\t⭐ SSL certificate for domain '$domain' successfully obtained from Cloudflare."
+        success "SSL certificate for domain '$domain' successfully obtained from Cloudflare."
         move_ssl_files_combined "$domain" "acme"
     else
-        error "\n\tFailed to obtain SSL certificate for domain '$domain' from Cloudflare."
+        error "Failed to obtain SSL certificate for domain '$domain' from Cloudflare."
     fi
 
     unset CF_Key CF_Email
@@ -348,30 +383,32 @@ clean_system() {
 
 uninstall_eossl() {
     clear
-    print "\n\n\tStarting EOSSL uninstallation...\n"
+    banner
+    print "Starting EOSSL uninstallation..."
+    line
 
     remove_packages
     remove_acme
 
-    print "\nDo you want to delete all certificates?"
-    input "\nEnter your choice (Y/N): " "D_C_choice"
+    print "Do you want to delete all certificates?"
+    input "Enter your choice (Y/N): " "D_C_choice"
     if [[ "$D_C_choice" =~ ^[Yy]$ ]]; then
-        print "\nAre you sure?"
-        input "\nEnter your choice (Y/N): " "D_C2_choice"
+        print "Are you sure?"
+        input "Enter your choice (Y/N): " "D_C2_choice"
         if [[ "$D_C2_choice" =~ ^[Yy]$ ]]; then
             remove_certificates
         fi
     else
-        print "\nOk, we keep the certificates, they are in these folders"
-        print "\n/etc/letsencrypt"
-        print "\n/var/lib/marzban/certs"
-        print "\n/certs"
+        print "Ok, we keep the certificates, they are in these folders:"
+        print "  /etc/letsencrypt"
+        print "  /var/lib/marzban/certs"
+        print "  /certs"
     fi
 
     remove_files
     clean_system
 
-    success "\n\n\tEOSSL and all related components have been successfully removed.\n"
+    success "EOSSL and all related components have been successfully removed."
 }
 
 # ============================================================
@@ -385,34 +422,34 @@ update_packages
 install_certbot
 install_acme
 clear
-
-print "\n\n\t\tWelcome to EOSSL (V1.0)\n"
-print "\t DEV BY EOAMIR"
-print "\t T.ME/EOAMIRM\n\n"
+banner
 
 while true; do
-    print "-------------------------------------------------------"
-    print "1) New Single Domain ssl (sub.domain.com)"
-    print "2) New Wildcard ssl (*.domain.com)"
-    print "3) New Multi-Domain ssl (sub.domain1.com sub2.domain2.com ...)"
-    print "4) Renewal ssl (update)"
-    print "5) Revoke ssl (delete)"
-    print "6) Uninstall and delete cert files"
-    print "0) Exit"
-    input '\nPlease Select your option: ' 'option'
+    menu_item 1 "New Single Domain ssl   (sub.domain.com)"
+    menu_item 2 "New Wildcard ssl        (*.domain.com)"
+    menu_item 3 "New Multi-Domain ssl    (sub1.domain1.com sub2.domain2.com ...)"
+    menu_item 4 "Renewal ssl             (update)"
+    menu_item 5 "Revoke ssl              (delete)"
+    menu_item 6 "Uninstall and delete cert files"
+    menu_item 0 "Exit"
+    line
+    input 'Please select your option: ' 'option'
     clear
+    banner
 
     case "$option" in
         1)
-            print "1) with acme & certbot (recommend)"
-            print "2) with cloudflare api"
-            input "\nplease enter your option number: " "select_option"
+            menu_item 1 "with acme & certbot (recommend)"
+            menu_item 2 "with cloudflare api"
+            input "please enter your option number: " "select_option"
             clear
+            banner
             case "$select_option" in
                 1)
                     validate_domain
                     validate_email
                     clear
+                    banner
                     get_single_ssl "$domain" "$email"
                     ;;
                 2)
@@ -427,15 +464,17 @@ while true; do
             esac
             ;;
         2)
-            print "1) with acme & certbot"
-            print "2) with cloudflare api (recommend)"
-            input "\nplease enter your option number: " "select_option"
+            menu_item 1 "with acme & certbot"
+            menu_item 2 "with cloudflare api (recommend)"
+            input "please enter your option number: " "select_option"
             clear
+            banner
             case "$select_option" in
                 1)
                     validate_domain
                     validate_email
                     clear
+                    banner
                     get_wildcard_ssl "$domain" "$email"
                     ;;
                 2)
@@ -450,9 +489,10 @@ while true; do
             esac
             ;;
         3)
-            input "\nEnter domains separated by space: " "domain"
+            input "Enter domains separated by space: " "domain"
             validate_email
             clear
+            banner
             get_multi_domain_ssl "$domain" "$email"
             ;;
         4)
@@ -465,7 +505,7 @@ while true; do
             ;;
         6)
             print "Are you sure?"
-            input "\nEnter your choice (Y/N): " "u_choice"
+            input "Enter your choice (Y/N): " "u_choice"
             if [[ "$u_choice" =~ ^[Yy]$ ]]; then
                 uninstall_eossl
             else
@@ -477,7 +517,7 @@ while true; do
             exit 0
             ;;
         *)
-            error "Invalid input. Please select a valid option.\n\n"
+            error "Invalid input. Please select a valid option."
             ;;
     esac
 done
