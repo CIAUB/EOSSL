@@ -4,14 +4,16 @@
 
 ### Professional SSL Certificate Manager for Linux Servers
 
-![Version](https://img.shields.io/badge/Version-v1.0-blue)
-![Bash](https://img.shields.io/badge/Bash-Script-green)
-![Linux](https://img.shields.io/badge/Linux-Supported-orange)
-![Cloudflare](https://img.shields.io/badge/Cloudflare-API-F38020)
-![Let's Encrypt](https://img.shields.io/badge/Let'sEncrypt-Supported-003A70)
-![acme.sh](https://img.shields.io/badge/acme.sh-Supported-success)
-![Certbot](https://img.shields.io/badge/Certbot-Supported-brightgreen)
-![License](https://img.shields.io/badge/License-MIT-yellow)
+<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=20&pause=1000&color=8B0000&center=true&vCenter=true&width=500&lines=Sharingan-sharp+Certificates;Wildcard%2C+Multi-Domain%2C+Automated;Cloudflare+API+Integration" alt="Typing SVG" />
+
+![Version](https://img.shields.io/badge/Version-v1.0-8B0000)
+![Bash](https://img.shields.io/badge/Bash-Script-8B0000)
+![Linux](https://img.shields.io/badge/Linux-Supported-8B0000)
+![Cloudflare](https://img.shields.io/badge/Cloudflare-API-8B0000)
+![Let's Encrypt](https://img.shields.io/badge/Let'sEncrypt-Supported-8B0000)
+![acme.sh](https://img.shields.io/badge/acme.sh-Supported-8B0000)
+![Certbot](https://img.shields.io/badge/Certbot-Supported-8B0000)
+![License](https://img.shields.io/badge/License-MIT-8B0000)
 
 Issue • Renew • Revoke • Wildcard • Cloudflare API • Panel Deployment
 
@@ -48,13 +50,13 @@ It simplifies issuing, renewing, revoking and deploying SSL certificates using *
 Run as root:
 
 ```bash
-sudo bash -c "$(curl -sL https://raw.githubusercontent.com/EOAMIR/EOSSL/main/eossl.sh)"
+sudo bash -c "$(curl -sL https://raw.githubusercontent.com/CIAUB/EOSSL/main/eossl.sh)"
 ```
 
 Alternative CDN:
 
 ```bash
-sudo bash -c "$(curl -sL https://raw.githack.com/EOAMIR/EOSSL/main/eossl.sh)"
+sudo bash -c "$(curl -sL https://raw.githack.com/CIAUB/EOSSL/main/eossl.sh)"
 ```
 
 > 💡 The second link uses a CDN and may work better on some networks.
@@ -180,7 +182,7 @@ https://developers.cloudflare.com/fundamentals/api/get-started/keys/
 Certificates can be automatically deployed to:
 
 | Destination                   | Path                               |
-| ----------------------------- | ---------------------------------- |
+| ------------------------------ | ----------------------------------- |
 | Custom Directory              | User Defined                       |
 | Marzban                       | `/var/lib/marzban/certs/<domain>/` |
 | 3x-ui / x-ui / s-ui / Hiddify | `/certs/<domain>/`                 |
@@ -287,10 +289,16 @@ Done
 
 ---
 
+<p align="center">
+<img src="https://raw.githubusercontent.com/CIAUB/CIAUB/main/sharingan.jpg" width="500" alt="Sharingan" />
+</p>
+
+---
+
 # 📞 Contact
 
-* Telegram: https://t.me/EOAMIRM
-* GitHub: https://github.com/EOAMIR
+* Telegram: https://t.me/VCIAU
+* GitHub: https://github.com/CIAUB
 
 ---
 
@@ -300,4 +308,4 @@ If EOSSL helps you, please consider giving the repository a ⭐ on GitHub.
 
 ---
 
-<sub><sub>Developed by EOAMIR</sub></sub>
+<sub><sub>Developed by CIAUB</sub></sub>
