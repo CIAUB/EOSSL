@@ -1,8 +1,8 @@
 #!/bin/bash
 # ============================================================
 #   EOSSL - Get an SSL certificate very easily
-#   DEV BY EOAMIR
-#   T.ME/EOAMIRM
+#   DEV BY CIAUB
+#   T.ME/VCIAU
 # ============================================================
 
 RED='\e[1;31m'
@@ -50,8 +50,8 @@ banner() {
   ╚══════╝  ╚═════╝  ╚═════╝   ╚═════╝   ╚══════╝
 EOF
     echo -e "${NC}"
-    echo -e "${RED}${BOLD}              DEV BY EOAMIR${NC}"
-    echo -e "${DRED}              T.ME/EOAMIRM${NC}"
+    echo -e "${RED}${BOLD}              DEV BY CIAUB${NC}"
+    echo -e "${DRED}              T.ME/VCIAU${NC}"
     line
 }
 
